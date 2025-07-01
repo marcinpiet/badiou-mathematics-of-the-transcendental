@@ -1,4 +1,6 @@
-{-# LANGUAGE GADTs, TypeOperators, MultiParamTypeClasses, KindSignatures, FlexibleInstances, DataKinds #-}
+{-# LANGUAGE GADTs, TypeOperators, MultiParamClasses, KindSignatures, FlexibleInstances, DataKinds, AllowAmbiguousTypes, ScopedTypeVariables, TypeApplications #-}
+
+import Data.Proxy (Proxy(Proxy))
 
 {-    An Analysis of Alain Badiou's "Preliminary Definitions" from 'Mathematics of the Transcendental'
     and an experimental implementation in Haskell.
@@ -80,34 +82,62 @@ instance Eq (SimpleCategory a b) where
 -- Now we declare that our SimpleCategory is an instance of the Category typeclass.
 -- We must provide implementations for `identity` and `compose`.
 instance Category SimpleCategory where
-  identity = IdA -- Note: A more robust implementation would handle IdB, IdC etc.
-  
-  -- Composition is defined by pattern matching on the valid compositions.
-  compose IdC G = G
-  compose G IdB = G
-  compose IdB F = F
+  identity :: forall a. SimpleCategory a a
+  identity = case (Proxy :: Proxy a) of
+    Proxy @'A -> IdA
+    Proxy @'B -> IdB
+    Proxy @'C -> IdC
+
+  compose :: forall b c a. SimpleCategory b c -> SimpleCategory a b -> SimpleCategory a c
+  -- Identity laws: f . id = f
   compose F IdA = F
-  compose G F = H -- Here we explicitly define that H is the composition of G after F.
-  -- Any other composition is undefined, effectively not existing in the category.
+  compose G IdB = G
+  compose H IdA = H
+
+  -- Identity laws: id . f = f
+  compose IdB F = F
+  compose IdC G = G
+  compose IdC H = H
+
+  -- Specific compositions
+  compose G F = H
+
+  -- Catch-all for undefined compositions
+  compose arr1 arr2 = error $ "Composition not defined for " ++ show arr1 ++ " and " ++ show arr2 ++ " in SimpleCategory"
 
 -- Main function to run our experiments
 main :: IO ()
 main = do
   putStrLn "--- Badiou Category Theory Experiments ---"
 
+  -- Define concrete arrows for experiments
+  let f = F :: SimpleCategory A B
+      g = G :: SimpleCategory B C
+      h = H :: SimpleCategory A C
+      idA = identity @A :: SimpleCategory A A
+      idB = identity @B :: SimpleCategory B B
+      idC = identity @C :: SimpleCategory C C
+
   -- 1. Experiment with Identity Law
-  putStrLn "\n1. Testing Identity Law:"
+  putStrLn "
+1. Testing Identity Law:"
   let g_composed_with_id = compose g idB
   putStrLn $ "  g . idB = " ++ show g_composed_with_id
   putStrLn $ "  Is g . idB == g? " ++ show (g_composed_with_id == g)
 
+  let id_composed_with_f = compose idB f
+  putStrLn $ "  idB . f = " ++ show id_composed_with_f
+  putStrLn $ "  Is idB . f == f? " ++ show (id_composed_with_f == f)
+
   -- 2. Experiment with Composition
-  putStrLn "\n2. Testing Composition:"
+  putStrLn "
+2. Testing Composition:"
   let h_from_composition = compose g f
   putStrLn $ "  g . f = " ++ show h_from_composition
-  
+
   -- 3. Badiou discusses commutative diagrams. This is a way of asking:
   --    Is the direct path `h` the same as the composed path `g . f`?
-  putStrLn "\n3. Testing Commutative Diagram (h == g . f):"
+  putStrLn "
+3. Testing Commutative Diagram (h == g . f):"
   putStrLn $ "  Is the explicit arrow H the same as the composed arrow (G . F)?"
   putStrLn $ "  Result: " ++ show (h == h_from_composition)
