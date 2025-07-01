@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs, TypeOperators, MultiParamTypeClasses, KindSignatures, FlexibleInstances #-}
+{-# LANGUAGE GADTs, TypeOperators, MultiParamTypeClasses, KindSignatures, FlexibleInstances, DataKinds #-}
 
 {-    An Analysis of Alain Badiou's "Preliminary Definitions" from 'Mathematics of the Transcendental'
     and an experimental implementation in Haskell.
