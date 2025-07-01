@@ -1,7 +1,6 @@
 {-# LANGUAGE GADTs, TypeOperators, MultiParamTypeClasses, KindSignatures, FlexibleInstances #-}
 
-{-
-    An Analysis of Alain Badiou's "Preliminary Definitions" from 'Mathematics of the Transcendental'
+{-    An Analysis of Alain Badiou's "Preliminary Definitions" from 'Mathematics of the Transcendental'
     and an experimental implementation in Haskell.
 
     Badiou introduces the fundamental concepts of category theory. In plain language, this is a way of
@@ -96,28 +95,19 @@ main :: IO ()
 main = do
   putStrLn "--- Badiou Category Theory Experiments ---"
 
-  -- Define some arrows from our category
-  let f = F
-  let g = G
-  let h = H
-  let idB = IdB
-
   -- 1. Experiment with Identity Law
-  putStrLn "
-1. Testing Identity Law:"
+  putStrLn "\n1. Testing Identity Law:"
   let g_composed_with_id = compose g idB
   putStrLn $ "  g . idB = " ++ show g_composed_with_id
   putStrLn $ "  Is g . idB == g? " ++ show (g_composed_with_id == g)
 
   -- 2. Experiment with Composition
-  putStrLn "
-2. Testing Composition:"
+  putStrLn "\n2. Testing Composition:"
   let h_from_composition = compose g f
   putStrLn $ "  g . f = " ++ show h_from_composition
   
   -- 3. Badiou discusses commutative diagrams. This is a way of asking:
   --    Is the direct path `h` the same as the composed path `g . f`?
-  putStrLn "
-3. Testing Commutative Diagram (h == g . f):"
+  putStrLn "\n3. Testing Commutative Diagram (h == g . f):"
   putStrLn $ "  Is the explicit arrow H the same as the composed arrow (G . F)?"
   putStrLn $ "  Result: " ++ show (h == h_from_composition)
