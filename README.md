@@ -4,4 +4,4 @@ This repository is for notes and code experiments related to Alain Badiou's "Mat
 
 ## Code Experiments
 
-This repository also contains Haskell code to experiment with the concepts presented in the book. The code is located in the file `Preliminary Definitions.hs`.
+This repository contains Haskell code to experiment with the concepts presented in the book. Each Haskell file is devoted to a separate chapter and is titled like the chapter (e.g., `Preliminary Definitions.hs`).
